@@ -14,11 +14,26 @@ spreadsheetId = os.getenv('SPREADSHEET_ID')
 
 # Funcion para conectarse con Google sheet API
 def spreadsheetApi():
-    pass
+    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+    SERVICE_ACCOUNT_FILE = 'creds/credentials.json'
+    credentials = service_account.Credentials.from_service_account_file(
+        filename=SERVICE_ACCOUNT_FILE,
+        scopes=SCOPES
+    )
+
+    return credentials
 
 # Principal
 def main():
-    pass
+    creds = spreadsheetApi()
+    service = build('sheets', 'v4', credentials=creds)
+
+    sheet = service.spreadsheets()
+    rangeName = 'Test'
+    result = sheet.values().get(spreadsheetId=spreadsheetId, range=rangeName).execute()
+    values = result.get('values', [])
+
+    return values
 
 if __name__ == '__main__':
-    print(spreadsheetId)
+    print(main())
